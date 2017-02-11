@@ -33,7 +33,7 @@ jobs:
       - shell:
           name: Run Tests
           command: python manage.py test --coverage
-      - artifacts_store:
+      - store_artifacts:
           path: test-reports/coverage
           destination: reports
       - test_results_store:
