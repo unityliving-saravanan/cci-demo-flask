@@ -1,7 +1,7 @@
 version: 2
 jobs:
   build:
-    pod:
+    docker:
       - image: python:3.5
         environment:
           FLASK_CONFIG: testing
