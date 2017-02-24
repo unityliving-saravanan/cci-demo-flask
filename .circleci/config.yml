@@ -11,30 +11,30 @@ jobs:
           POSTGRES_USER: ubuntu
           POSTGRES_DB: circle_test
           POSTGRES_PASSWORD: ""
+    working_directory: /home/ubuntu/cci-demo-flask
     steps:
-      - shell:
+      - checkout
+      - run:
           name: Install Yarn
           command: |
             apt-key adv --fetch-keys http://dl.yarnpkg.com/debian/pubkey.gpg
             echo "deb http://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
             apt-get update -qq
             apt-get install -y -qq yarn
-      - cache_restore:
+      - restore_cache:
           key: projectname-{{ .Branch }}-{{ checksum "yarn.lock" }}
-      - shell:
+      - run:
           name: Install Dependencies
-          command: |
-            yarn
-            pip install -r requirements.txt
-      - cache_save:
+          command: yarn && pip install -r requirements.txt
+      - save_cache:
           key: projectname-{{ .Branch }}-{{ checksum "yarn.lock" }}
           paths:
             - "/home/ubuntu/.yarn-cache"
-      - shell:
+      - run:
           name: Run Tests
           command: python manage.py test --coverage
       - store_artifacts:
           path: test-reports/coverage
           destination: reports
-      - test_results_store:
+      - store_test_results:
           path: "test-reports/"
